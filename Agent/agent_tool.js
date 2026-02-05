@@ -1,28 +1,32 @@
 import 'dotenv/config';
-import { Agent, run,tool } from '@openai/agents';
+import { Agent, run, tool } from '@openai/agents';
 import { z } from 'zod';
+import axios from 'axios';
 
 const getWeatherTool = tool({
- name: 'getWeather',
- description: 'useful for when you want to get the current weather in a given location',
- parameters: z.object({
-   location: z.string().describe('name of the city'),
- }),
- execute: async ({ city }) => {
-   return `The current weather in ${city} is okay`;
- },
-})
+  name: 'get_weather',
+  description: 'returns the current weather information for the given city',
+  parameters: z.object({
+    city: z.string().describe('name of the city'),
+  }),
+  execute: async function ({ city }) {
+    const url = `https://wttr.in/${city.toLowerCase()}?format=%C+%t`;
+    const response = await axios.get(url, { responseType: 'text' });
+    return `The weather of ${city} is ${response.data}`;
+  },
+});
+
 const agent = new Agent({
   name: 'Weather agent',
-  instructions: 'You are a weather assistant. Provide weather information for a given location.',
+  instructions: `
+        You are an expert weather agent that helps user to tell weather report
+    `,
   tools: [getWeatherTool],
 });
 
 async function main(query = '') {
-  const result = await run(
-    agent,
-    query,
-  );
+  const result = await run(agent, query);
   console.log('Result:', result.finalOutput);
 }
-main('Dhaka');
+
+main('What is the weather of Narayanganj?');
