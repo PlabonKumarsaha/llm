@@ -17,12 +17,26 @@ const getWeatherTool = tool({
   },
 });
 
+const sendEmailTool = tool({
+  name: 'send_email',
+  description: 'sends an email to the given email address',
+  parameters: z.object({
+    email: z.string().describe('email address of the recipient'),
+    subject: z.string().describe('subject of the email'),
+    body: z.string().describe('body of the email'),
+  }),
+  execute: async function ({ body, subject, email }) {
+    console.log('Sending email to:', email);
+    return `Email sent to ${email}`;
+  },
+});
+
 const agent = new Agent({
   name: 'Weather agent',
   instructions: `
         You are an expert weather agent that helps user to tell weather report
     `,
-  tools: [getWeatherTool],
+  tools: [getWeatherTool,sendEmailTool],
 });
 
 async function main(query = '') {
@@ -30,4 +44,4 @@ async function main(query = '') {
   console.log('Result:', result.finalOutput);
 }
 
-main('What is the weather of Narayanganj, Sydney , Dhaka?');
+main('What is the weather of Narayanganj, Sydney , Dhaka? send an email to pks@gmail.com');
