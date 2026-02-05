@@ -10,6 +10,7 @@ const getWeatherTool = tool({
     city: z.string().describe('name of the city'),
   }),
   execute: async function ({ city }) {
+    console.log('Searching for city:', city);
     const url = `https://wttr.in/${city.toLowerCase()}?format=%C+%t`;
     const response = await axios.get(url, { responseType: 'text' });
     return `The weather of ${city} is ${response.data}`;
@@ -29,4 +30,4 @@ async function main(query = '') {
   console.log('Result:', result.finalOutput);
 }
 
-main('What is the weather of Narayanganj?');
+main('What is the weather of Narayanganj, Sydney , Dhaka?');
