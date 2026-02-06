@@ -27,6 +27,8 @@ const sendEmailTool = tool({
   }),
   execute: async function ({ body, subject, email }) {
     console.log('Sending email to:', email);
+    console.log('Subject:', subject);
+    console.log('Body:', body);
     return `Email sent to ${email}`;
   },
 });
@@ -44,4 +46,4 @@ async function main(query = '') {
   console.log('Result:', result.finalOutput);
 }
 
-main('What is the weather of Narayanganj, Sydney , Dhaka? send an email to pks@gmail.com');
+main('What is the weather of Narayanganj, Sydney , Dhaka? send an email to pks@gmail.com. Add a subject "Weather Report" and body "The weather is nice. Prepare a nice body summarizing the data"');
