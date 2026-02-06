@@ -3,6 +3,12 @@ import { Agent, run, tool } from '@openai/agents';
 import { z } from 'zod';
 import axios from 'axios';
 
+const getWeatherResultSchema = z.object({
+  city: z.string().describe('name of the city'),
+  degrees: z.number().describe('temperature in degrees Celsius'),
+  description: z.string().describe('description of the weather'),
+});
+
 const getWeatherTool = tool({
   name: 'get_weather',
   description: 'returns the current weather information for the given city',
@@ -39,11 +45,12 @@ const agent = new Agent({
         You are an expert weather agent that helps user to tell weather report
     `,
   tools: [getWeatherTool,sendEmailTool],
+  outputType:getWeatherResultSchema,
 });
 
 async function main(query = '') {
   const result = await run(agent, query);
-  console.log('Result:', result.finalOutput);
+  console.log('Result:', result.finalOutput.city,result.finalOutput.degrees,result.finalOutput.description);
 }
 
 main('What is the weather of Narayanganj, Sydney , Dhaka? send an email to pks@gmail.com. Add a subject "Weather Report" and body "The weather is nice. Prepare a nice body summarizing the data"');
