@@ -1,0 +1,2 @@
+Processing refund for customer 1212 and plan 2
+. The reason for the refund is Customer wants to lower his tier.

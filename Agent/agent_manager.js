@@ -36,7 +36,7 @@ const processRefund = tool({
   parameters: z.object({
     customerId: z.string().describe('id of the customer'),
     planId: z.string().describe('id of the plan'),
-    reason: z.string().describe('reason for the refund').optional(),
+    reason: z.string().describe('reason for the refund'),
   }),
   execute: async function ({customerId, planId, reason }) {
     console.log('Processing refund for plan:', planId);
@@ -65,7 +65,10 @@ const salesAgent = new Agent({
         You are an expert sales agent for internal company.
         Talk to the user to help them with their sales inquiries.
     `,
-    tools: [fetchAvailablePlans],
+    tools: [fetchAvailablePlans,refundAgent.asTool({
+        toolName: 'refund_expert',
+        toolDescription: 'refund expert tool',
+    })],
 },
 )
 
@@ -77,4 +80,4 @@ async function runSalesAgent(query = '') {
 
 // runSalesAgent('I am Plabon. what are the available plans for internet?');
 
-runSalesAgent('I am Plabon. I need a refund for plan 2');
+runSalesAgent('I am Plabon. I need a refund for plan 2.My customer id is 1212.I want refund Beacuse I want to lower my tire');
