@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { Agent, tool,run } from '@openai/agents';
 import { z } from 'zod';
-
+import fs from 'node:fs/promises'
 
 const fetchAvailablePlans = tool({
     name: 'fetch_available_plans',
@@ -30,6 +30,35 @@ const fetchAvailablePlans = tool({
     ]
     },
 })
+const processRefund = tool({
+  name: 'process_refund',
+  description: 'processes the refund request',
+  parameters: z.object({
+    customerId: z.string().describe('id of the customer'),
+    planId: z.string().describe('id of the plan'),
+    reason: z.string().describe('reason for the refund').optional(),
+  }),
+  execute: async function ({customerId, planId, reason }) {
+    console.log('Processing refund for plan:', planId);
+    fs.appendFile('./refund.txt', `Processing refund for customer ${customerId} and plan ${planId}\n. The reason for the refund is ${reason}\n`);
+    return `Refund issued!`;
+  },
+});
+
+const refundAgent = new Agent({
+  name: 'Refund Agent',
+  instructions: `
+        You are an expert refund agent for internal company.
+        Talk to the user to help them with their refund inquiries.
+    `,
+    execute: async function ({ customerId, planId, reason }) {
+      console.log('Refund request received for customer:', customerId);
+      console.log('Plan:', planId);
+      console.log('Reason:', reason);
+      return `Refund processed for customer ${customerId} and plan ${planId}`;
+    },
+    tools: [processRefund]
+});
 const salesAgent = new Agent({
   name: 'Sales Agent',
   instructions: `
@@ -46,4 +75,6 @@ async function runSalesAgent(query = '') {
   console.log('Result:', result.finalOutput);
 }
 
-runSalesAgent('I am Plabon. what are the available plans for internet?');
+// runSalesAgent('I am Plabon. what are the available plans for internet?');
+
+runSalesAgent('I am Plabon. I need a refund for plan 2');
