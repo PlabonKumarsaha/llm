@@ -2,6 +2,7 @@
 
 import 'dotenv/config';
 import { Agent, tool,run } from '@openai/agents';
+import { RECOMMENDED_PROMPT_PREFIX } from '@openai/agents-core/extensions';
 import { z } from 'zod';
 import fs from 'node:fs/promises'
 
@@ -71,10 +72,11 @@ const salesAgent = new Agent({
     })],
 },
 )
-
+// RECOMMENDED_PROMPT_PREFIX takes hand off as a prompt preifx. It helps to understand better
 const receptionAgent = new Agent({
   name: 'Reception Agent',
   instructions: `
+  ${RECOMMENDED_PROMPT_PREFIX}
         You are a customer facing agent expert.
         You are expert in customer needs and hadoff them to the respective 
         expert agent   `,
@@ -93,4 +95,4 @@ async function main(query = '') {
   console.log('Result:', result.finalOutput);
 }
 
-main('I am Plabon. what are the best available plans for internet?');
+main('I am Plabon. I need a refund for plan 2.My customer id is 1212.I want refund Beacuse I want to lower my tire');
