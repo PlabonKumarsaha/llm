@@ -1,9 +1,17 @@
 import 'dotenv/config';
+import { OpenAI } from 'openai';
 import { Agent, run, tool } from '@openai/agents';
 import { z } from 'zod';
 
+const client = new OpenAI();
 
-let sharedHistory = [];
+//creates a convo id for individuals..puts all the info in same connversation id
+client.conversations.create({}).then((response) => {
+//   console.log(response);
+});
+
+
+// let sharedHistory = [];
 const executeSql = tool({
   name: 'execute_sql',
   description: 'This executes the given sql query',
@@ -44,13 +52,14 @@ const sqlAgent = new Agent({
 });
 
 async function main(q = '') {
-  sharedHistory.push({role: 'user', content: q});
-  const result = await run(sqlAgent, sharedHistory);
-  sharedHistory = result.history;
-//   console.log(`Result history`, result.history);
+  const result = await run(sqlAgent, q,{
+    conversationId:'conv_698d31e329c88190b1146d91c9e92f1d0ada9d586dafc2e7'
+  });
   console.log(`Query`, result.finalOutput.sqlQuery);
 }
-await main("my name is PKS")
+// await main("my name is PKS")
 
 console.log(`break`);
 await main('get me all the comments with my name');
+
+// await main('get me all the comments with my name');
