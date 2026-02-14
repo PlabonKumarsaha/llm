@@ -34,6 +34,7 @@ const sendEmailTool = tool({
         },
       }
     );
+    console.log('mail gese!')
     return response.data;
   },
 });
@@ -81,6 +82,7 @@ async function main(q = '') {
         } else {
           currentState.reject(interput);
         }
+        //resuming after an inturption if neeeded!
          result = await run(agent, currentState);
         hasInteruption = result.interruptions?.length > 0;
       }
